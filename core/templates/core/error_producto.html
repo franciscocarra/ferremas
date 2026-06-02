@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería Rinco Del Herrero - Menú</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-4">
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+        <nav>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
+                <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                <!-- CAMBIO: botón para mostrar categorías -->
+                <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                {% if user.is_authenticated %}
+                            <li class="relative">
+                                <button id="user-menu-button" type="button" class="flex items-center text-white">
+                                    <i class="bi bi-person-circle mr-2"></i>
+                                    <span>{{ user.email }}</span>
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">                  
+                                    <form action="{% url 'logout' %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{% url 'iniciar_session' %}" class="hover:underline">Iniciar sesión</a>
+                            </li>
+                        {% endif %}
+                <li>
+                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- SIDEBAR DE CATEGORÍAS -->
+<div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+    <div class="flex items-center justify-between px-4 py-3 border-b">
+        <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+        <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+    </div>
+    <ul class="p-4 space-y-2 text-gray-700">
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+    </ul>
+</div>
+
+<section class="flex flex-col items-center justify-center py-20 pb-60 bg-blue-100 text-center text-gray-800">
+    <h2 class="text-4xl font-bold mb-2">¡Oops! La página se encuentra en construcción.</h2>
+    <p class="text-xl mb-6">vuelva proximamente</p>
+
+    <!-- Martillo -->
+    <img src="{% static 'core/img/martillo_error.gif' %}" alt="Martillo animado" class="mb-6 w-24 h-24" />
+
+    <!-- Botón de regreso -->
+    <a href="{% url 'home' %}" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition mb-40">
+        Volver al inicio
+    </a>
+</section>  
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'core/js/menu_categoria.js' %}"></script>
+    <script src="{% static 'core/js/icono.js' %}"></script>
+
+    <script>
+        // Lógica para el menú desplegable del header
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', function() { userMenuDropdown.classList.toggle('hidden'); });
+                window.addEventListener('click', function(e) {
+                    if (userMenuButton && userMenuDropdown && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Lógica para el sidebar de categorías
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    </script>
+</body>
+
+
+</html>

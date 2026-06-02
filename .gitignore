@@ -1,0 +1,22 @@
+# Entornos virtuales
+venv/
+env/
+ENV/
+.venv/
+.virtualenv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Archivos y carpetas temporales
+*.tmp
+*.swp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Variables de entorno y secretos (¡MUY IMPORTANTE!)
+.env

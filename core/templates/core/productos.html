@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería Rinco Del Herrero - Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'core/css/productos.css' %}">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-2"> 
+    <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+
+        <div class="flex items-center">
+            
+            <nav class="mr-6"> 
+                <ul class="flex space-x-4">
+                    <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                    <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
+                    <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                </ul>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                
+                <div id="nav-auth-container" class="relative flex items-center">
+                    
+                    <div id="nav-login-container">
+                        <a href="{% url 'iniciar_session' %}" class="hover:underline font-bold text-blue-400">Iniciar sesión</a>
+                    </div>
+
+                    <div id="nav-user-container" class="relative hidden">
+                        <button id="user-menu-button" type="button" class="flex items-center text-white focus:outline-none">
+                            <i class="bi bi-person-circle mr-2"></i>
+                            <span id="nav-user-name" class="font-bold">Usuario</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        
+                        <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">             
+                            <button id="nav-logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-600 font-bold hover:bg-gray-100">
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                        <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                        <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                        <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                        <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                        {% if cart_item_count > 0 %}
+                        <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                            {{ cart_item_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
+            <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+            <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
+    </div>
+
+    <section class="bg-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">PRODUCTOS</h2>
+                <button id="toggleDolarPricesButton" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-bold transition-colors">
+                    Ver Precios en Dólar
+                </button>
+            </div>
+            
+            <div id="cuadroDolar" class="fixed top-20 right-4 bg-white shadow-md rounded-lg p-4 z-50 border border-gray-200">
+                <h4 class="text-sm font-semibold text-gray-700 mb-1">Valor Dólar Hoy</h4>
+                <p id="valorDolarDisplay" class="text-lg font-bold text-green-600">Cargando...</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <aside class="col-span-1">
+                    <h3 class="font-semibold text-lg text-gray-800 mb-4">Categorías</h3>
+                    <ul class="space-y-2">
+                        <li class="hover:text-blue-600 cursor-pointer">Accesorio Herramienta</li>
+                    </ul>
+                    <h3 class="font-semibold mb-2">Marcas</h3>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="{% url 'productos' %}" class="hover:underline {% if not marca_seleccionada %}font-bold text-blue-600{% endif %}">
+                            Todas las marcas
+                        </a>
+                    </li>
+                    
+                    {% for marca in marcas %}
+                        <li>
+                            <a href="?marca={{ marca|urlencode }}" class="hover:underline text-capitalize {% if marca_seleccionada == marca %}font-bold text-blue-600{% endif %}">
+                                {{ marca }}
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="text-gray-500 text-sm">No hay marcas disponibles</li>
+                    {% endfor %}
+                </ul>
+                </aside>
+
+                <div class="col-span-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for producto in lista_productos %}
+                        <div class="bg-white rounded-md shadow-sm border border-gray-200 flex flex-col justify-between group">
+                            <div>
+                                <div class="relative">
+                                    {% if producto.imagen_url %}
+                                        <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre_producto }}" class="h-48 w-full object-contain rounded-t-md p-4" />
+                                    {% else %}
+                                        <img src="{% static 'core/img/placeholder.png' %}" alt="Imagen no disponible" class="h-48 w-full object-contain rounded-t-md p-4" />
+                                    {% endif %}
+                                </div>
+                                <div class="p-4">
+                                    <h4 class="text-sm font-semibold mb-2 leading-tight text-gray-800 hover:text-orange-500 transition-colors truncate">
+                                        {{ producto.nombre_producto|upper }}
+                                    </h4>
+                                    <p class="text-xs text-gray-400 truncate mb-2">{{ producto.marca }}</p>
+                                    {% if producto.stock > 0 %}
+                                    <p class="text-sm text-green-600 mb-2 flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        In stock
+                                    </p>
+                                    {% else %}
+                                    <p class="text-sm text-red-600 mb-2">Agotado</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="p-4 pt-0">
+                                <p class="product-price text-xl font-bold text-gray-900 mb-3" data-price-clp="{{ producto.precio }}">
+                                    ${{ producto.precio }} <span class="text-sm font-normal text-gray-500">+ IVA</span>
+                                </p>
+                                <div class="product-action-container">
+                                    {% if producto.stock > 0 %}
+                                        {% if user.is_authenticated %}
+                                            <form action="{% url 'add_to_cart' producto.sku %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 font-bold transition-colors">
+                                                    Añadir Al Carrito
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <a href="{% url 'iniciar_session' %}?next={% url 'productos' %}" class="w-full block text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-bold transition-colors">
+                                                Iniciar Sesión
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        <button disabled class="w-full bg-gray-400 text-white py-2 rounded-md font-bold cursor-not-allowed">
+                                            Sin Stock
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">SKU: {{ producto.sku }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-3 d-flex flex-column align-items-right">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="{% url 'productos' %}">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black text-white py-10 mt-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
+            <!-- Logo y contacto -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
+                    <span class="font-bold text-xl">Ferretería Rinco Del Herrero</span>
+                </div>
+                <p class="font-semibold">Casa Matriz</p>
+                <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
+                <div class="flex items-center mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
+                    <span>+56 9 4722 9108</span>
+                </div>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="contacto.html">Contáctanos</a></button>
+            </div>
+
+            <!-- Nosotros -->
+            <div>
+                <h3 class="font-semibold mb-2">Nosotros</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Quiénes Somos</a></li>
+                    <li><a href="#" class="hover:underline">Tiendas</a></li>
+                    <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
+                </ul>
+            </div>
+
+            <!-- Ayuda -->
+            <div>
+                <h3 class="font-semibold mb-2">Ayuda</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">FAQ</a></li>
+                    <li><a href="#" class="hover:underline">¿Cómo Comprar?</a></li>
+                    <li><a href="#" class="hover:underline">Condiciones de despacho</a></li>
+                    <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
+                </ul>
+            </div>
+
+            <!-- Categorías -->
+            <div>
+                <h3 class="font-semibold mb-2">Categorías</h3>
+                <ul class="space-y-1">
+                    <li><a href="herramientas.html" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="error_producto.html" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="error_producto.html" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="pintura.html" class="hover:underline">Pinturas</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal -->
+            <div>
+                <h3 class="font-semibold mb-2">Legal</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Términos y condiciones</a></li>
+                    <li><a href="#" class="hover:underline">Política de garantía y devoluciones</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
+                </ul>
+                <div class="mt-4">
+                    <img src="https://placehold.co/100x40/000000/FFFFFF?text=SSL" alt="SSL" class="h-10">
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // SCRIPT LIMPIO: SOLO CONTIENE LA LÓGICA NECESARIA PARA ESTA PÁGINA
+
+        // Función para el menú desplegable del header
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+            if (userMenuButton) {
+                userMenuButton.addEventListener('click', function() { userMenuDropdown.classList.toggle('hidden'); });
+                window.addEventListener('click', function(e) {
+                    if (userMenuButton && userMenuDropdown && !userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Función para el sidebar de categorías
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // Lógica para la API del Dólar
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleDolarPricesButton = document.getElementById('toggleDolarPricesButton');
+            const productPriceElements = document.querySelectorAll('.product-price');
+            const valorDolarDisplay = document.getElementById('valorDolarDisplay');
+            const API_DOLAR_URL = 'https://mindicador.cl/api/dolar';
+            let isShowingUSD = false;
+            let dolarValue = null;
+
+            async function fetchDolarValue() {
+                if (dolarValue !== null) return dolarValue;
+                try {
+                    const response = await fetch(API_DOLAR_URL);
+                    if (!response.ok) throw new Error('Error de red');
+                    const data = await response.json();
+                    dolarValue = data.serie[0].valor;
+                    if (valorDolarDisplay) {
+                        valorDolarDisplay.textContent = `$${dolarValue.toLocaleString('es-CL')} CLP`;
+                    }
+                } catch (error) {
+                    console.error('Error al obtener el valor del dólar:', error);
+                    if (valorDolarDisplay) valorDolarDisplay.textContent = 'Error';
+                    dolarValue = null;
+                }
+                return dolarValue;
+            }
+
+            if (toggleDolarPricesButton) {
+                toggleDolarPricesButton.addEventListener('click', async function () {
+                    const dolarActual = await fetchDolarValue();
+                    if (dolarActual === null) {
+                        alert('No se pudo obtener el valor del dólar para hacer la conversión.');
+                        return;
+                    }
+                    isShowingUSD = !isShowingUSD;
+                    productPriceElements.forEach(el => {
+                        const clp = parseFloat(el.dataset.priceClp);
+                        if (isShowingUSD) {
+                            const usd = (clp / dolarActual).toFixed(2);
+                            el.innerHTML = `$${clp.toLocaleString('es-CL')} <span class="text-sm font-normal text-gray-500">+ IVA</span><br><span class="text-base font-semibold text-blue-600">(${usd} USD)</span>`;
+                        } else {
+                            el.innerHTML = `$${clp.toLocaleString('es-CL')} <span class="text-sm font-normal text-gray-500">+ IVA</span>`;
+                        }
+                    });
+                    toggleDolarPricesButton.textContent = isShowingUSD ? 'Ver Precios en CLP' : 'Ver Precios en Dólar';
+                });
+            }
+            
+            fetchDolarValue(); // Carga inicial del valor del dólar
+        });
+    </script>
+
+    <script>
+    // Tu función para las categorías
+    function toggleCategorias() {
+        const sidebar = document.getElementById('categoriasSidebar');
+        sidebar.classList.toggle('-translate-x-full');
+    }
+
+    // Esperamos a que todo el HTML esté cargado
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. LÓGICA DE SESIÓN CON JWT (EXPRESS) ---
+        // Vamos a leer la bóveda del navegador
+        const token = localStorage.getItem('token_ferremas');
+        const usuarioStr = localStorage.getItem('usuario_ferremas');
+        
+        // Buscamos los elementos que pusimos en tu nuevo Header
+        const loginContainer = document.getElementById('nav-login-container');
+        const userContainer = document.getElementById('nav-user-container');
+        const userNameSpan = document.getElementById('nav-user-name');
+        const logoutBtn = document.getElementById('nav-logout-btn');
+
+        // Si existe el token, significa que el usuario está conectado
+        if (token && usuarioStr) {
+            const usuario = JSON.parse(usuarioStr);
+            
+            // Ocultamos el botón "Iniciar sesión"
+            if(loginContainer) loginContainer.style.display = 'none';
+            // Mostramos el contenedor con el nombre y el dropdown
+            if(userContainer) userContainer.classList.remove('hidden');
+            
+            // Inyectamos tu nombre (Francisco) en la barra
+            if(userNameSpan) userNameSpan.textContent = usuario.nombre || usuario.correo;
+        }
+
+        // --- 2. LÓGICA PARA DESPLEGAR EL MENÚ DE USUARIO ---
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+        if (userMenuButton && userMenuDropdown) {
+            userMenuButton.addEventListener('click', function() {
+                userMenuDropdown.classList.toggle('hidden');
+            });
+
+            // Si haces clic afuera, se cierra
+            window.addEventListener('click', function(e) {
+                if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                    userMenuDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- 3. LÓGICA PARA CERRAR SESIÓN ---
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                // Destruimos la evidencia (borramos Token y datos)
+                localStorage.removeItem('token_ferremas');
+                localStorage.removeItem('usuario_ferremas');
+                
+                // Recargamos la página
+                window.location.reload(); 
+            });
+        }
+    });
+</script>
+</body>
+</html>

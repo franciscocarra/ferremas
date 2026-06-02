@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería Rinco Del Herrero - Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="{% static 'core/css/login.css' %}">
+</head>
+<body>
+{% csrf_token %}
+    <header class="bg-dark text-white py-4 w-full">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="{% url 'home' %}" class="hover:underline">Inicio</a></li>
+                    <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                    <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                    <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                    <li>
+                        <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+
+                            {% if cart_item_count > 0 %}
+                            <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">
+                                {{ cart_item_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- SIDEBAR DE CATEGORÍAS (Se mantiene para la estructura general, pero no funcional en HTML plano sin JS adicional) -->
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a> <!-- Assuming error_producto.html -->
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a> <!-- Assuming error_producto.html -->
+            <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a> <!-- Assuming error_producto.html -->
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a> <!-- Assuming error_producto.html -->
+            <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-container">
+            <h1 class="text-2xl font-bold mb-6 text-gray-800">Iniciar Sesión</h1>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" placeholder="ej. tu@correo.com" required>
+            </div>
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" required>
+            </div>
+            <button id="loginButton">Ingresar</button>
+
+            <p class="mt-4 text-sm text-gray-600">
+                ¿No tienes una cuenta? <a href="{% url 'registro' %}" class="text-blue-600 hover:underline">Regístrate aquí</a>
+            </p>
+            <p class="mt-2 text-sm text-gray-600">
+                ¿Olvidaste tu contraseña? <a href="{% url 'olvidar_contrasena' %}" class="text-blue-600 hover:underline">Haz clic aquí</a>
+            </p>
+        </div>
+    </div>
+
+    <footer class="bg-black text-white py-10 mt-16">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
+            <!-- Logo y contacto -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
+                    <span class="font-bold text-xl">Ferretería Rinco Del Herrero</span>
+                </div>
+                <p class="font-semibold">Casa Matriz</p>
+                <p>Av. Américo Vespucio 1252, Pudahuel, Región Metropolitana</p>
+                <div class="flex items-center mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l1.5-1.5M21 10l-1.5-1.5M9 16h6M10 12h4m-1 8v-8m-4 4h8" /></svg>
+                    <span>+56 9 4722 9108</span>
+                </div>
+                <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>
+            </div>
+            
+            <!-- Nosotros -->
+            <div>
+                <h3 class="font-semibold mb-2">Nosotros</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Quiénes Somos</a></li>
+                    <li><a href="#" class="hover:underline">Tiendas</a></li>
+                    <li><a href="#" class="hover:underline">Canal de Denuncias</a></li>
+                </ul>
+            </div>
+            
+            <!-- Ayuda -->
+            <div>
+                <h3 class="font-semibold mb-2">Ayuda</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">FAQ</a></li>
+                    <li><a href="#" class="hover:underline">¿Cómo Comprar?</a></li>
+                    <li><a href="#" class="hover:underline">Condiciones de despacho</a></li>
+                    <li><a href="#" class="hover:underline">Seguimiento de Compra</a></li>
+                </ul>
+            </div>
+            
+            <!-- Categorías -->
+            <div>
+                <h3 class="font-semibold mb-2">Categorías</h3>
+                <ul class="space-y-1">
+                    <li><a href="{% url 'herramientas' %}" class="hover:underline">Herramientas de Construcción</a></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Herramientas de Aseo y Jardín</a></li>
+                    <li><a href="{% url 'error_producto' %}" class="hover:underline">Insumos y Accesorios</a></li>
+                    <li><a href="{% url 'pintura' %}" class="hover:underline">Pinturas</a></li>
+                </ul>
+            </div>
+            
+            <!-- Legal -->
+            <div>
+                <h3 class="font-semibold mb-2">Legal</h3>
+                <ul class="space-y-1">
+                    <li><a href="#" class="hover:underline">Términos y condiciones</a></li>
+                    <li><a href="#" class="hover:underline">Política de garantía y devoluciones</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de cookies</a></li>
+                    <li><a href="#" class="hover:underline">Políticas de privacidad</a></li>
+                </ul>
+                <div class="mt-4">
+                    <img src="https://placehold.co/100x40/000000/FFFFFF?text=SSL" alt="SSL" class="h-10">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Función para mostrar/ocultar el menú lateral
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        // ¡EL SECRETO ESTÁ AQUÍ! Apuntamos a la ruta nativa de DJANGO, no a Express.
+        // Así Django puede validar y crear su "Cookie de Seguridad"
+        const LOGIN_API_URL = "{% url 'iniciar_session' %}";
+
+        const emailInput = document.getElementById('email');
+        const contrasenaInput = document.getElementById('contrasena');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const successMessageDiv = document.getElementById('successMessage');
+
+        function showMessage(element, message) {
+            errorMessageDiv.style.display = 'none';
+            successMessageDiv.style.display = 'none';
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        loginButton.addEventListener('click', async () => {
+            const correo = emailInput.value.trim();
+            const contrasena = contrasenaInput.value;
+
+            errorMessageDiv.style.display = 'none';
+            successMessageDiv.style.display = 'none';
+
+            if (!correo || !contrasena) {
+                showMessage(errorMessageDiv, 'Por favor, ingresa tu correo y contraseña.');
+                return;
+            }
+
+            try {
+                // Hacemos la petición POST directamente a views.py de Django
+                const response = await fetch(LOGIN_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo, contrasena })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    alert(`¡Bienvenido Francisco! Validando accesos...`);
+                    
+                    // Normalizamos el texto (minúsculas y sin espacios) para evitar errores
+                    const tipo = data.tipo_persona ? data.tipo_persona.toLowerCase().trim() : '';
+                    
+                    // REDIRECCIÓN INTELIGENTE (Ahora sí pasará el @login_required)
+                    if (tipo === 'administrador' || tipo === 'admin') {
+                        window.location.href = "{% url 'administracion' %}";
+                    } else if (tipo === 'bodeguero') {
+                        window.location.href = "{% url 'bodeguero' %}";
+                    } else if (tipo === 'contador') {
+                        window.location.href = "{% url 'contador' %}";
+                    } else {
+                        window.location.href = "{% url 'home' %}";
+                    }
+
+                } else {
+                    showMessage(errorMessageDiv, data.error || 'Error al iniciar sesión. Revisa tus credenciales.');
+                }
+            } catch (error) {
+                console.error('Error de red:', error);
+                showMessage(errorMessageDiv, 'No se pudo conectar con el servidor de Django.');
+            }
+        });
+    </script>
+</body>
+</html>
+
+</body>
+</html>
