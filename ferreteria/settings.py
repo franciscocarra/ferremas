@@ -51,6 +51,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"  # usa Bootstrap 5
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -152,3 +153,9 @@ TRANSBANK_WEBPAY_PLUS_API_KEY = os.getenv('TBK_API_KEY') # <-- Oculto
 TRANSBANK_ENVIRONMENT = 'INTEGRACION'
 
 LOGIN_URL = 'iniciar_session'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Opcional: Para que WhiteNoise comprima las imágenes y carguen más rápido
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
