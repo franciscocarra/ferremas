@@ -141,14 +141,12 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleCategorias() {
             const sidebar = document.getElementById('categoriasSidebar');
             sidebar.classList.toggle('-translate-x-full');
         }
-
-        const API_BASE_URL = 'https://usuarios-k4u6.onrender.com'; // Asegúrate de que esta URL sea correcta para tu API
 
         const emailInput = document.getElementById('email');
         const resetButton = document.getElementById('resetPasswordButton');
@@ -156,49 +154,36 @@
 
         function showMessage(message, isError = false) {
             messageBox.textContent = message;
-            messageBox.className = 'message-box'; // Reset classes
+            messageBox.className = 'message-box'; // Resetear clases
             if (isError) {
                 messageBox.classList.add('error-message');
             }
             messageBox.style.display = 'block';
         }
 
-        resetButton.addEventListener('click', async () => {
+        resetButton.addEventListener('click', () => {
             const correo = emailInput.value.trim();
-            messageBox.style.display = 'none'; // Hide previous messages
+            messageBox.style.display = 'none'; // Ocultar mensajes previos
 
             if (!correo) {
                 showMessage('Por favor, ingresa tu correo electrónico.', true);
                 return;
             }
 
-            // Simulate API call to request password reset
-            try {
-                // IMPORTANT: This is a placeholder API call.
-                // You need to implement a backend endpoint (e.g., in your Node.js Express API)
-                // that actually sends the password reset email.
-                const response = await fetch(`${API_BASE_URL}/reset-password-request`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ correo })
-                });
+            // Cambiar el texto del botón para que se vea realista
+            resetButton.textContent = 'Enviando...';
+            resetButton.disabled = true;
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    showMessage(data.mensaje || 'Si tu correo está registrado, recibirás un enlace para restablecer tu contraseña.');
-                    emailInput.value = ''; // Clear email field
-                } else {
-                    // For security, it's often better not to reveal if an email exists or not.
-                    // A generic message is safer.
-                    showMessage(data.error || 'No se pudo procesar tu solicitud. Inténtalo de nuevo más tarde.', true);
-                }
-            } catch (error) {
-                console.error('Error de red o del servidor:', error);
-                showMessage('No se pudo conectar con el servidor. Inténtalo más tarde.', true);
-            }
+            // Simular un retraso de 1 segundo como si estuviera cargando
+            setTimeout(() => {
+                // Mostrar mensaje de éxito simulado
+                showMessage('Si tu correo está registrado, recibirás un enlace para restablecer tu contraseña.');
+                emailInput.value = ''; // Limpiar la cajita
+                
+                // Restaurar el botón a la normalidad
+                resetButton.textContent = 'Enviar Enlace de Restablecimiento';
+                resetButton.disabled = false;
+            }, 1000); 
         });
     </script>
 </body>
