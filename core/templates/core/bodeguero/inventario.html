@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (!confirmar) return;
 
             try {
-                const respuesta = await fetch(`http://127.0.0.1:8001/productos/${sku}`, {
+                const respuesta = await fetch(`https://productos-reje.onrender.com/productos/${sku}`, {
                     method: 'DELETE'
                 });
 
@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             // 2. Hacer POST a la API enviando los datos en el body
-            const respuesta = await fetch('http://127.0.0.1:8001/productos/', { // URL sin parámetros
+            const respuesta = await fetch('https://productos-reje.onrender.com/productos/', { // URL sin parámetros
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json' // Especificar el tipo de contenido

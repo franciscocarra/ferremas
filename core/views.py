@@ -37,7 +37,7 @@ from io import BytesIO
 from django.template.loader import get_template
 from django.utils.crypto import get_random_string
 
-API_URL = "http://127.0.0.1:8001/productos"
+API_URL = "https://productos-reje.onrender.com/productos"
 
 def home(request):
     return render(request, 'core/home.html')
@@ -45,7 +45,7 @@ def home(request):
 def producto(request):
     try:
         # Hacemos una petición a la API para obtener todos los productos
-        response = requests.get('http://127.0.0.1:8001/productos/')
+        response = requests.get('https://productos-reje.onrender.com/productos/')
         response.raise_for_status()  # Lanza un error si la petición falla
         productos = response.json()
     except requests.exceptions.RequestException:
@@ -170,7 +170,7 @@ def carrito(request):
 
 def add_to_cart(request, sku):
     try:
-        response = requests.get(f'http://127.0.0.1:8001/productos/{sku}')
+        response = requests.get(f'https://productos-reje.onrender.com/productos/{sku}')
         response.raise_for_status()
         producto_data = response.json()
     except requests.exceptions.RequestException:
@@ -449,7 +449,7 @@ def bodeguero(request):
 def inventario(request):
     try:
         # 1. Obtenemos los productos actuales de la API
-        response = requests.get('http://127.0.0.1:8001/productos/')
+        response = requests.get('https://productos-reje.onrender.com/productos/')
         response.raise_for_status()
         productos_api = response.json()
         
@@ -543,11 +543,11 @@ def editar_producto_api(request, sku):
     """
     1) En GET: obtiene los datos del producto desde la API y los muestra en editar_p.html.
     2) En POST: toma los campos del formulario, arma los query params (incluyendo sku)
-       y hace PUT a http://127.0.0.1:8001/productos?sku=...&nombre_producto=... etc.
+       y hace PUT a https://productos-reje.onrender.com/productos?sku=...&nombre_producto=... etc.
     """
 
     # URL base de tu API (sin el SKU en la ruta)
-    api_base = 'http://127.0.0.1:8001/productos'
+    api_base = 'https://productos-reje.onrender.com/productos'
 
     if request.method == 'POST':
         # Recolectamos todos los campos del formulario
