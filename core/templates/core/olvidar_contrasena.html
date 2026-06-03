@@ -148,43 +148,66 @@
             sidebar.classList.toggle('-translate-x-full');
         }
 
+        const API_BASE_URL = 'https://usuarios-k4u6.onrender.com';
+
         const emailInput = document.getElementById('email');
         const resetButton = document.getElementById('resetPasswordButton');
         const messageBox = document.getElementById('messageBox');
 
         function showMessage(message, isError = false) {
             messageBox.textContent = message;
-            messageBox.className = 'message-box'; // Resetear clases
+            messageBox.className = 'message-box';
             if (isError) {
                 messageBox.classList.add('error-message');
             }
             messageBox.style.display = 'block';
         }
 
-        resetButton.addEventListener('click', () => {
+        resetButton.addEventListener('click', async () => {
             const correo = emailInput.value.trim();
-            messageBox.style.display = 'none'; // Ocultar mensajes previos
+            messageBox.style.display = 'none';
 
             if (!correo) {
                 showMessage('Por favor, ingresa tu correo electrónico.', true);
                 return;
             }
 
-            // Cambiar el texto del botón para que se vea realista
-            resetButton.textContent = 'Enviando...';
+            // Cambiamos el botón mientras espera la respuesta de la base de datos
+            resetButton.textContent = 'Verificando en la base de datos...';
             resetButton.disabled = true;
 
-            // Simular un retraso de 1 segundo como si estuviera cargando
-            setTimeout(() => {
-                // Mostrar mensaje de éxito simulado
-                showMessage('Si tu correo está registrado, recibirás un enlace para restablecer tu contraseña.');
-                emailInput.value = ''; // Limpiar la cajita
-                
-                // Restaurar el botón a la normalidad
+            try {
+                // Aquí llamamos a la API de Express para validar el correo
+                const response = await fetch(`${API_BASE_URL}/verificar-correo`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: correo })
+                });
+
+                if (response.ok) {
+                    // Si Express responde con éxito (Ej: Status 200)
+                    showMessage('¡Éxito! Se ha enviado un enlace de recuperación a tu correo.');
+                    emailInput.value = '';
+                } else if (response.status === 404) {
+                    // Si Express responde que no lo encontró (Status 404)
+                    showMessage('Correo inválido: Este usuario no está registrado en nuestro sistema.', true);
+                } else {
+                    // Cualquier otro error (Ej: 500)
+                    showMessage('Ocurrió un problema al consultar la base de datos.', true);
+                }
+
+            } catch (error) {
+                console.error('Error de conexión:', error);
+                showMessage('No se pudo conectar con el servidor. Inténtalo más tarde.', true);
+            } finally {
+                // Devolvemos el botón a la normalidad
                 resetButton.textContent = 'Enviar Enlace de Restablecimiento';
                 resetButton.disabled = false;
-            }, 1000); 
+            }
         });
     </script>
+    
 </body>
 </html>
