@@ -75,14 +75,14 @@
         <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
     </div>
     <ul class="p-4 space-y-2 text-gray-700">
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a>
-        <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">máquinas</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
-        <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
-        <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
-    </ul>
+            <a href="{% url 'productos' %}?categoria=aseo"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+            <a href="{% url 'productos' %}?categoria=seguridad"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad</li></a>
+            <a href="{% url 'productos' %}?categoria=cemento"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="{% url 'productos' %}?categoria=herramienta"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas y Herramientas</li></a>
+            <a href="{% url 'productos' %}?categoria=fijacion"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+            <a href="{% url 'productos' %}?categoria=pintura"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="{% url 'productos' %}?categoria=tensor"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
 </div>
 
 <!-- SECCIÓN DE CONTACTO -->

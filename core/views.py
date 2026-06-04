@@ -59,13 +59,33 @@ def producto(request):
         if marca and marca not in marcas_existentes:
             marcas_existentes.append(marca)
 
-    # --- LO NUEVO: Filtramos los productos según la marca seleccionada ---
+    # ---------------------------------------------------------------------
+    # 2. LO NUEVO: Filtramos por Categoría (Buscador por palabra clave)
+    # ---------------------------------------------------------------------
+    categoria_seleccionada = request.GET.get('categoria', '').lower()
+    
+    if categoria_seleccionada:
+        lista_filtrada = []
+        for p in productos:
+            nombre = p.get('nombre_producto', '').lower()
+            desc = p.get('descripcion', '').lower()
+            
+            # Si la categoría (ej. 'pintura') está en el nombre o descripción, lo dejamos
+            if categoria_seleccionada in nombre or categoria_seleccionada in desc:
+                lista_filtrada.append(p)
+                
+        # Sobrescribimos la lista con los productos que pasaron el filtro de categoría
+        productos = lista_filtrada
+
+    # ---------------------------------------------------------------------
+    # 3. Filtramos los productos según la marca seleccionada
+    # ---------------------------------------------------------------------
     marca_seleccionada = request.GET.get('marca') # Leemos la URL
     
     if marca_seleccionada:
         # Sobrescribimos la lista 'productos' dejando SOLO los que coincidan con la marca
         productos = [p for p in productos if p.get('marca') == marca_seleccionada]
-    # ---------------------------------------------------------------------
+
 
     # Enviamos la lista de productos (filtrada o completa) y las marcas al template
     return render(request, 'core/productos.html', {

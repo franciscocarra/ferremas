@@ -41,19 +41,14 @@
         </div>
     </header>
 
-    <!-- SIDEBAR DE CATEGORÍAS (Se mantiene para la estructura general, pero no funcional en HTML plano sin JS adicional) -->
     <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
         <div class="flex items-center justify-between px-4 py-3 border-b">
             <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
             <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
         </div>
         <ul class="p-4 space-y-2 text-gray-700">
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a> <!-- Assuming error_producto.html -->
-            <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a> <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad y Protección Personal</li></a> <a href="{% url 'materiales' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas</li></a> <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a> <a href="{% url 'pintura' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
             <a href="{% url 'error_producto' %}"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
         </ul>
     </div>
@@ -86,7 +81,6 @@
 
     <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
-            <!-- Logo y contacto -->
             <div>
                 <div class="flex items-center mb-4">
                     <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
@@ -101,7 +95,6 @@
                 <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="{% url 'contacto' %}">Contáctanos</a></button>
             </div>
             
-            <!-- Nosotros -->
             <div>
                 <h3 class="font-semibold mb-2">Nosotros</h3>
                 <ul class="space-y-1">
@@ -111,7 +104,6 @@
                 </ul>
             </div>
             
-            <!-- Ayuda -->
             <div>
                 <h3 class="font-semibold mb-2">Ayuda</h3>
                 <ul class="space-y-1">
@@ -122,7 +114,6 @@
                 </ul>
             </div>
             
-            <!-- Categorías -->
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
                 <ul class="space-y-1">
@@ -133,7 +124,6 @@
                 </ul>
             </div>
             
-            <!-- Legal -->
             <div>
                 <h3 class="font-semibold mb-2">Legal</h3>
                 <ul class="space-y-1">
@@ -197,12 +187,33 @@
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    alert(`¡Bienvenido Francisco! Validando accesos...`);
+                    
+                    // --- 1. GUARDAMOS LA SESIÓN EN EL NAVEGADOR ---
+                    if (data.token) {
+                        localStorage.setItem('token_ferremas', data.token);
+                    }
+                    
+                    // Si Django envía data.user lo guardamos, si no, armamos uno de respaldo
+                    let usuarioGuardar = data.user;
+                    if (!usuarioGuardar) {
+                        usuarioGuardar = { 
+                            correo: correo, 
+                            nombre: correo.split('@')[0], // Usa la primera parte del correo como nombre
+                            tipo_persona: data.tipo_persona 
+                        };
+                    }
+                    localStorage.setItem('usuario_ferremas', JSON.stringify(usuarioGuardar));
+
+
+                    // --- 2. ALERTA DINÁMICA CON EL NOMBRE REAL ---
+                    const nombreMostrar = usuarioGuardar.nombre || usuarioGuardar.correo;
+                    alert(`¡Bienvenido ${nombreMostrar}! Validando accesos...`);
+                    
                     
                     // Normalizamos el texto (minúsculas y sin espacios) para evitar errores
                     const tipo = data.tipo_persona ? data.tipo_persona.toLowerCase().trim() : '';
                     
-                    // REDIRECCIÓN INTELIGENTE (Ahora sí pasará el @login_required)
+                    // REDIRECCIÓN INTELIGENTE
                     if (tipo === 'administrador' || tipo === 'admin') {
                         window.location.href = "{% url 'administracion' %}";
                     } else if (tipo === 'bodeguero') {
@@ -222,8 +233,5 @@
             }
         });
     </script>
-</body>
-</html>
-
 </body>
 </html>
