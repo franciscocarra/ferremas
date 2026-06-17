@@ -65,15 +65,20 @@ def producto(request):
     categoria_seleccionada = request.GET.get('categoria', '').lower()
     
     if categoria_seleccionada:
-        # Diccionario "traductor" de palabras clave
+        # Diccionario "traductor" de palabras clave (¡Ahora con las nuevas categorías!)
         diccionario_categorias = {
             'pintura': ['pintura', 'latex', 'látex', 'esmalte', 'anticorrosivo', 'acrilico'],
             'herramienta': ['herramienta', 'martillo', 'alicate', 'destornillador', 'sierra', 'esmeril', 'nivel'],
-            'cemento': ['cemento', 'ladrillo', 'plancha', 'cerámica', 'ceramica', 'yeso', 'pasta', 'viga', 'material']
+            'cemento': ['cemento', 'ladrillo', 'plancha', 'cerámica', 'ceramica', 'yeso', 'pasta', 'viga', 'material'],
+            
+            # --- NUEVAS CATEGORÍAS ---
+            'aseo': ['aseo', 'industrial', 'escoba', 'desengrasante', 'mopa', 'basurero', 'cloro', 'limpieza'],
+            'seguridad': ['seguridad', 'casco', 'zapato', 'guante', 'lente', 'antiparra', 'chaleco', 'reflectante', 'protección'],
+            'fijacion': ['fijacion', 'fijaciones', 'tornillo', 'clavo', 'tarugo', 'tuerca', 'remache', 'anclaje'],
+            'tensor': ['tensor', 'tensores', 'cable', 'eslinga', 'cadena', 'piola', 'gancho']
         }
         
         # Obtenemos la lista de palabras a buscar según la categoría elegida
-        # Si la categoría no está en el diccionario, busca la palabra sola.
         palabras_clave = diccionario_categorias.get(categoria_seleccionada, [categoria_seleccionada])
         
         lista_filtrada = []
@@ -81,17 +86,16 @@ def producto(request):
             nombre = p.get('nombre_producto', '').lower()
             desc = p.get('descripcion', '').lower()
             
-            # Verificamos si ALGUNA de las palabras clave está en el nombre o descripción
             coincide = False
             for palabra in palabras_clave:
                 if palabra in nombre or palabra in desc:
                     coincide = True
-                    break # Si encuentra una coincidencia, deja de buscar más palabras
+                    break 
                     
             if coincide:
                 lista_filtrada.append(p)
                 
-        # Sobrescribimos la lista con los productos que pasaron el filtro
+        # Sobrescribimos la lista con los productos filtrados
         productos = lista_filtrada
 
     # ---------------------------------------------------------------------
