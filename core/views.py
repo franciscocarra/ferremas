@@ -43,7 +43,7 @@ API_URL = "https://productos-reje.onrender.com/productos"
 def home(request):
     return render(request, 'core/home.html')
 
-def productos(request):
+def producto(request):
     try:
         # Hacemos una petición a la API para obtener todos los productos
         response = requests.get('https://productos-reje.onrender.com/productos/')
@@ -121,7 +121,6 @@ def productos(request):
         'marcas': marcas_existentes,
         'marca_seleccionada': marca_seleccionada 
     })
-
 
 def contacto(request):
     return render(request, 'core/contacto.html')
