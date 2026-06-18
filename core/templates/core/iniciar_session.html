@@ -188,7 +188,7 @@
 
                 if (response.ok && data.success) {
                     
-                    // --- 1. GUARDAMOS LA SESIÓN EN EL NAVEGADOR ---
+                    // --- 1. GUARDAMOS LA SESIÓN EN EL NAVEGADOR (¡Esto era lo que faltaba!) ---
                     if (data.token) {
                         localStorage.setItem('token_ferremas', data.token);
                     }
@@ -203,12 +203,10 @@
                         };
                     }
                     localStorage.setItem('usuario_ferremas', JSON.stringify(usuarioGuardar));
+                    // --------------------------------------------------------------------------
 
-
-                    // --- 2. ALERTA DINÁMICA CON EL NOMBRE REAL ---
                     const nombreMostrar = usuarioGuardar.nombre || usuarioGuardar.correo;
                     alert(`¡Bienvenido ${nombreMostrar}! Validando accesos...`);
-                    
                     
                     // Normalizamos el texto (minúsculas y sin espacios) para evitar errores
                     const tipo = data.tipo_persona ? data.tipo_persona.toLowerCase().trim() : '';
