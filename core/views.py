@@ -1041,7 +1041,7 @@ def eliminar_mensaje(request, mensaje_id):
 
 def promociones(request):
     try:
-        # Traemos todos los productos
+        # Traemos todos los productos directo de la base de datos (tu API)
         response = requests.get('https://productos-reje.onrender.com/productos/')
         response.raise_for_status()
         productos = response.json()
@@ -1054,11 +1054,21 @@ def promociones(request):
     else:
         productos_promocion = productos
 
-    # Le agregamos un "precio antiguo" falso para que se vea el descuento en el HTML
+    # Aplicamos el descuento dinámico a cada producto elegido
     for p in productos_promocion:
-        # Simulamos que originalmente costaban un 30% más
-        p['precio_antiguo'] = int(p['precio'] / 0.7)
-        p['descuento'] = 30 # Porcentaje a mostrar en la etiqueta
+        # 1. El precio que viene de la base de datos ahora es el "precio antiguo"
+        precio_original = p['precio']
+        
+        # 2. Generamos un porcentaje de descuento aleatorio entre 10% y 30%
+        descuento_aleatorio = random.randint(10, 30)
+        
+        # 3. Calculamos el nuevo precio matemático (Precio original menos el % de descuento)
+        precio_oferta = int(precio_original - (precio_original * (descuento_aleatorio / 100)))
+        
+        # 4. Guardamos estos nuevos datos en el producto para que el HTML los dibuje
+        p['precio_antiguo'] = precio_original
+        p['precio'] = precio_oferta
+        p['descuento'] = descuento_aleatorio
 
     return render(request, 'core/promociones.html', {
         'lista_productos': productos_promocion,
