@@ -22,7 +22,7 @@
                 <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
                 <!-- CAMBIO: botón para mostrar categorías -->
                 <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
-                <li><a href="{% url 'error_producto' %}" class="hover:underline">Promociones</a></li>
+                <li><a href="{% url 'promociones' %}" class="hover:underline">Promociones</a></li>
                 <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
                 {% if user.is_authenticated %}
                 <li class="relative">

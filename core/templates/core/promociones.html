@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferretería Rinco Del Herrero - Promociones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'core/css/productos.css' %}">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-dark text-white py-2"> 
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold"><a href="{% url 'home' %}">Ferretería Rinco Del Herrero</a></h1>
+            <div class="flex items-center">
+                <nav class="mr-6"> 
+                    <ul class="flex space-x-4">
+                        <li><a href="{% url 'productos' %}" class="hover:underline">Productos</a></li>
+                        <li><button onclick="toggleCategorias()" class="hover:underline focus:outline-none">Categorías</button></li>
+                        <li><a href="{% url 'promociones' %}" class="hover:underline font-bold text-yellow-400">Promociones</a></li>
+                        <li><a href="{% url 'contacto' %}" class="hover:underline">Contacto</a></li>
+                    </ul>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <div id="nav-auth-container" class="relative flex items-center">
+                        <div id="nav-login-container">
+                            <a href="{% url 'iniciar_session' %}" class="hover:underline font-bold text-blue-400">Iniciar sesión</a>
+                        </div>
+                        <div id="nav-user-container" class="relative hidden">
+                            <button id="user-menu-button" type="button" class="flex items-center text-white focus:outline-none">
+                                <i class="bi bi-person-circle mr-2"></i>
+                                <span id="nav-user-name" class="font-bold">Usuario</span>
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div id="user-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">             
+                                <button id="nav-logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-600 font-bold hover:bg-gray-100">Cerrar Sesión</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{% url 'carrito' %}" class="relative inline-block w-8 h-8">
+                            <div class="absolute bottom-0 left-0 w-8 h-5 border-2 border-white rounded-sm"></div>
+                            <div class="absolute bottom-5 left-1 w-6 h-2 border-2 border-white border-b-0 rounded-t-sm"></div>
+                            <div class="absolute bottom-1 left-1 w-1 h-1 bg-white rounded-full"></div>
+                            <div class="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full"></div>
+                            {% if cart_item_count > 0 %}
+                            <span class="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-600 rounded-full">{{ cart_item_count }}</span>
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="categoriasSidebar" class="fixed top-0 left-0 w-80 h-full bg-white shadow-lg z-50 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="flex items-center justify-between px-4 py-3 border-b">
+            <h2 class="text-lg font-bold text-gray-800">Categorías</h2>
+            <button onclick="toggleCategorias()" class="text-xl font-bold text-gray-600 hover:text-black">&times;</button>
+        </div>
+        <ul class="p-4 space-y-2 text-gray-700">
+            <a href="{% url 'productos' %}?categoria=aseo"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Aseo Industrial</li></a>
+            <a href="{% url 'productos' %}?categoria=seguridad"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Ropa de Seguridad</li></a>
+            <a href="{% url 'productos' %}?categoria=cemento"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Materiales de Construcción</li></a>
+            <a href="{% url 'productos' %}?categoria=herramienta"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Máquinas y Herramientas</li></a>
+            <a href="{% url 'productos' %}?categoria=fijacion"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Fijaciones</li></a>
+            <a href="{% url 'productos' %}?categoria=pintura"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Pintura</li></a>
+            <a href="{% url 'productos' %}?categoria=tensor"><li class="hover:bg-gray-100 p-2 rounded cursor-pointer">Tensores</li></a>
+        </ul>
+    </div>
+
+    <div class="bg-red-600 text-white py-10 px-4 text-center">
+        <h2 class="text-4xl font-bold mb-2 uppercase tracking-wide">🔥 Días de Locura Ferretera 🔥</h2>
+        <p class="text-lg font-medium">Descubre nuestros productos destacados con hasta un 30% de descuento. ¡Solo por tiempo limitado!</p>
+    </div>
+
+    <section class="bg-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {% for producto in lista_productos %}
+                <div class="bg-white rounded-md shadow-lg border-2 border-red-100 flex flex-col justify-between group relative transform hover:-translate-y-1 transition duration-300">
+                    
+                    <div class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">
+                        -{{ producto.descuento }}%
+                    </div>
+
+                    <div>
+                        <div class="relative pt-4">
+                            {% if producto.imagen_url %}
+                                <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre_producto }}" class="h-48 w-full object-contain p-4" />
+                            {% else %}
+                                <img src="{% static 'core/img/placeholder.png' %}" alt="Imagen no disponible" class="h-48 w-full object-contain p-4" />
+                            {% endif %}
+                        </div>
+                        <div class="p-4 text-center">
+                            <h4 class="text-sm font-bold mb-1 leading-tight text-gray-800 truncate">
+                                {{ producto.nombre_producto|upper }}
+                            </h4>
+                            <p class="text-xs text-gray-400 mb-2">{{ producto.marca }}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 text-center">
+                        <p class="text-sm text-gray-400 line-through mb-0">${{ producto.precio_antiguo }} CLP</p>
+                        <p class="product-price text-2xl font-extrabold text-red-600 mb-3" data-price-clp="{{ producto.precio }}">
+                            ${{ producto.precio }} <span class="text-xs font-normal text-gray-500">+ IVA</span>
+                        </p>
+                        
+                        <div class="product-action-container">
+                            {% if producto.stock > 0 %}
+                                {% if user.is_authenticated %}
+                                    <form action="{% url 'add_to_cart' producto.sku %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 font-bold transition-colors shadow-md">
+                                            Aprovechar Oferta
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <a href="{% url 'iniciar_session' %}?next={% url 'promociones' %}" class="w-full block text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 font-bold transition-colors">
+                                        Inicia Sesión para Comprar
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <button disabled class="w-full bg-gray-400 text-white py-2 rounded-md font-bold cursor-not-allowed">
+                                    Agotado
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black text-white py-10 mt-10">
+        <div class="container mx-auto px-4 text-center">
+            <p class="font-bold text-xl mb-2">Ferretería Rinco Del Herrero</p>
+            <p class="text-sm text-gray-400">© 2026 Todos los derechos reservados. Las ofertas aplican solo para compras web.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleCategorias() {
+            const sidebar = document.getElementById('categoriasSidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuarioStr = localStorage.getItem('usuario_ferremas');
+            const loginContainer = document.getElementById('nav-login-container');
+            const userContainer = document.getElementById('nav-user-container');
+            const userNameSpan = document.getElementById('nav-user-name');
+            const logoutBtn = document.getElementById('nav-logout-btn');
+
+            if (usuarioStr) {
+                const usuario = JSON.parse(usuarioStr);
+                if(loginContainer) loginContainer.style.display = 'none';
+                if(userContainer) userContainer.classList.remove('hidden');
+                if(userNameSpan) userNameSpan.textContent = usuario.nombre || usuario.correo;
+            }
+
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+            if (userMenuButton && userMenuDropdown) {
+                userMenuButton.addEventListener('click', function() {
+                    userMenuDropdown.classList.toggle('hidden');
+                });
+                window.addEventListener('click', function(e) {
+                    if (!userMenuButton.contains(e.target) && !userMenuDropdown.contains(e.target)) {
+                        userMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('token_ferremas');
+                    localStorage.removeItem('usuario_ferremas');
+                    window.location.reload(); 
+                });
+            }
+        });
+    </script>
+</body>
+</html>

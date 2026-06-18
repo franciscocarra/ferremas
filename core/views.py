@@ -1038,3 +1038,28 @@ def eliminar_mensaje(request, mensaje_id):
     mensaje.delete()
     # Redirige de vuelta a la tabla
     return redirect('lista_mensajes')
+
+def promociones(request):
+    try:
+        # Traemos todos los productos
+        response = requests.get('https://productos-reje.onrender.com/productos/')
+        response.raise_for_status()
+        productos = response.json()
+    except requests.exceptions.RequestException:
+        productos = []
+
+    # Elegimos 8 productos al azar para que sean las "ofertas del día"
+    if len(productos) >= 8:
+        productos_promocion = random.sample(productos, 8)
+    else:
+        productos_promocion = productos
+
+    # Le agregamos un "precio antiguo" falso para que se vea el descuento en el HTML
+    for p in productos_promocion:
+        # Simulamos que originalmente costaban un 30% más
+        p['precio_antiguo'] = int(p['precio'] / 0.7)
+        p['descuento'] = 30 # Porcentaje a mostrar en la etiqueta
+
+    return render(request, 'core/promociones.html', {
+        'lista_productos': productos_promocion,
+    })

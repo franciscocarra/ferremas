@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/enviar-contacto/', views.enviar_contacto, name='enviar_contacto'),
     path('administracion/mensajes/', views.lista_mensajes, name='lista_mensajes'),
     path('administracion/mensajes/eliminar/<int:mensaje_id>/', views.eliminar_mensaje, name='eliminar_mensaje'),
+    path('promociones/', views.promociones, name='promociones'),
     
     
 
