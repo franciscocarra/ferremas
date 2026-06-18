@@ -276,19 +276,18 @@
 
     // Esperamos a que todo el HTML esté cargado
     document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. LÓGICA DE SESIÓN CON JWT (EXPRESS) ---
-        // Vamos a leer la bóveda del navegador
-        const token = localStorage.getItem('token_ferremas');
+        // --- 1. LÓGICA DE SESIÓN ---
+        // Solo verificamos el usuario (ignoramos el token porque Django usa Cookies)
         const usuarioStr = localStorage.getItem('usuario_ferremas');
         
-        // Buscamos los elementos que pusimos en tu nuevo Header
+        // Buscamos los elementos del Header
         const loginContainer = document.getElementById('nav-login-container');
         const userContainer = document.getElementById('nav-user-container');
         const userNameSpan = document.getElementById('nav-user-name');
         const logoutBtn = document.getElementById('nav-logout-btn');
 
-        // Si existe el token, significa que el usuario está conectado
-        if (token && usuarioStr) {
+        // Si existe la credencial del usuario, activamos el menú
+        if (usuarioStr) {
             const usuario = JSON.parse(usuarioStr);
             
             // Ocultamos el botón "Iniciar sesión"
@@ -296,7 +295,7 @@
             // Mostramos el contenedor con el nombre y el dropdown
             if(userContainer) userContainer.classList.remove('hidden');
             
-            // Inyectamos tu nombre (Francisco) en la barra
+            // Inyectamos el nombre dinámico en la barra
             if(userNameSpan) userNameSpan.textContent = usuario.nombre || usuario.correo;
         }
 
@@ -320,11 +319,11 @@
         // --- 3. LÓGICA PARA CERRAR SESIÓN ---
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
-                // Destruimos la evidencia (borramos Token y datos)
+                // Destruimos la evidencia
                 localStorage.removeItem('token_ferremas');
                 localStorage.removeItem('usuario_ferremas');
                 
-                // Recargamos la página
+                // Recargamos la página para volver al estado inicial
                 window.location.reload(); 
             });
         }
