@@ -36,13 +36,14 @@ from datetime import datetime, timedelta
 from io import BytesIO
 from django.template.loader import get_template
 from django.utils.crypto import get_random_string
+from django.core.paginator import Paginator
 
 API_URL = "https://productos-reje.onrender.com/productos"
 
 def home(request):
     return render(request, 'core/home.html')
 
-def producto(request):
+def productos(request):
     try:
         # Hacemos una petición a la API para obtener todos los productos
         response = requests.get('https://productos-reje.onrender.com/productos/')
@@ -107,13 +108,20 @@ def producto(request):
         # Sobrescribimos la lista 'productos' dejando SOLO los que coincidan con la marca
         productos = [p for p in productos if p.get('marca') == marca_seleccionada]
 
+    # ---------------------------------------------------------------------
+    # 4. LA MAGIA: Paginación de 12 productos
+    # ---------------------------------------------------------------------
+    paginator = Paginator(productos, 12) 
+    numero_pagina = request.GET.get('page') 
+    page_obj = paginator.get_page(numero_pagina)
 
-    # Enviamos la lista de productos (filtrada o completa) y las marcas al template
+    # Enviamos la lista PAGINADA al template (reemplazando la lista completa)
     return render(request, 'core/productos.html', {
-        'lista_productos': productos,
+        'lista_productos': page_obj,  # ¡OJO! Ahora mandamos 'page_obj' en vez de 'productos'
         'marcas': marcas_existentes,
-        'marca_seleccionada': marca_seleccionada # Enviamos esto para resaltar la marca activa en el HTML
+        'marca_seleccionada': marca_seleccionada 
     })
+
 
 def contacto(request):
     return render(request, 'core/contacto.html')

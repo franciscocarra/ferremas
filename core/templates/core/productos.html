@@ -182,19 +182,44 @@
                     </div>
                 </div>
             </div>
-            <div class="container mt-3 d-flex flex-column align-items-right">
+
+            <div class="container mt-8 d-flex flex-column align-items-center">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item active"><a class="page-link" href="{% url 'productos' %}">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    
+                    {% if lista_productos.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ lista_productos.previous_page_number }}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.marca %}&marca={{ request.GET.marca }}{% endif %}">Previous</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    {% endif %}
+
+                    {% for i in lista_productos.paginator.page_range %}
+                        {% if lista_productos.number == i %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ i }}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.marca %}&marca={{ request.GET.marca }}{% endif %}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if lista_productos.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ lista_productos.next_page_number }}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}{% if request.GET.marca %}&marca={{ request.GET.marca }}{% endif %}">Next</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                    {% endif %}
+                    
                 </ul>
             </div>
+            
         </div>
     </section>
 
     <footer class="bg-black text-white py-10 mt-16">
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8 text-sm">
-            <!-- Logo y contacto -->
             <div>
                 <div class="flex items-center mb-4">
                     <div class="bg-warning text-white font-bold text-lg px-2 py-1 mr-2">RDH</div>
@@ -209,7 +234,6 @@
                 <button class="mt-4 bg-white text-red-600 font-bold py-2 px-4 rounded"><a href="contacto.html">Contáctanos</a></button>
             </div>
 
-            <!-- Nosotros -->
             <div>
                 <h3 class="font-semibold mb-2">Nosotros</h3>
                 <ul class="space-y-1">
@@ -219,7 +243,6 @@
                 </ul>
             </div>
 
-            <!-- Ayuda -->
             <div>
                 <h3 class="font-semibold mb-2">Ayuda</h3>
                 <ul class="space-y-1">
@@ -230,7 +253,6 @@
                 </ul>
             </div>
 
-            <!-- Categorías -->
             <div>
                 <h3 class="font-semibold mb-2">Categorías</h3>
                 <ul class="space-y-1">
@@ -241,7 +263,6 @@
                 </ul>
             </div>
 
-            <!-- Legal -->
             <div>
                 <h3 class="font-semibold mb-2">Legal</h3>
                 <ul class="space-y-1">
